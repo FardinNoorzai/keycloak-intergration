@@ -1,4 +1,4 @@
-package test.billingservice.config;
+package test.orderservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

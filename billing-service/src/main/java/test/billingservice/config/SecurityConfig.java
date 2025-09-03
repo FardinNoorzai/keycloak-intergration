@@ -13,27 +13,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable default login page and form login
-            .oauth2Login().disable()
-            .formLogin().disable()
-            
-            .authorizeHttpRequests(auth -> auth
-                // Health checks open
-                .requestMatchers("/actuator/health").permitAll()
-                // Internal endpoints for service-to-service calls
-                .requestMatchers("/api/internal/**").hasRole("ORDER_READ")
-                // Billing endpoints (optional)
-                .requestMatchers("/billing/**").authenticated()
-                // everything else must be authenticated
-                .anyRequest().authenticated()
-            )
-            
-            // No session creation for service-to-service
-            .sessionManagement(session -> session.disable())
-            
-            // Billing service does not act as a resource server (unless exposing APIs)
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt().disable());
-        
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/billing/orders").permitAll() // anyone can call for testing
+                        .anyRequest().authenticated()
+                )
+                .csrf(csrf -> csrf.disable())   // disable CSRF for APIs
+                .formLogin().disable();         // disable login page
         return http.build();
     }
 }
